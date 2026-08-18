@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azar Sincronizado — Lotería de Bogotá 1970–2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;700;900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-ticket">AZ</span>
+    <div class="brand-text">
+      <h1>Azar Sincronizado</h1>
+      <p>Lotería de Bogotá &middot; archivo histórico 1970–2026</p>
+    </div>
+  </div>
+  <div class="topbar-status" id="estado-api">comprobando API…</div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="consulta">Consulta histórica</button>
+  <button class="tab-btn" data-tab="estadisticas">Estadísticas</button>
+  <button class="tab-btn" data-tab="ciclos">Ciclos del siete</button>
+  <button class="tab-btn" data-tab="hemeroteca">Hemeroteca &amp; noticias</button>
+</nav>
+
+<main>
+
+  <!-- ============ CONSULTA HISTÓRICA ============ -->
+  <section class="panel active" id="tab-consulta">
+    <div class="panel-head">
+      <h2>Consulta histórica de sorteos</h2>
+      <p class="hint">Filtra por año o rango de años. Los datos mostrados provienen de la base local (SQLite).</p>
+    </div>
+
+    <form class="filtros" id="form-filtros">
+      <label>Desde año
+        <input type="number" id="f-anio-desde" min="1970" max="2026" placeholder="1970">
+      </label>
+      <label>Hasta año
+        <input type="number" id="f-anio-hasta" min="1970" max="2026" placeholder="2026">
+      </label>
+      <button type="submit">Filtrar</button>
+      <button type="button" id="btn-limpiar" class="secundario">Limpiar</button>
+    </form>
+
+    <div class="tabla-wrap">
+      <table id="tabla-sorteos">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th># Sorteo</th>
+            <th>Premio mayor</th>
+            <th>Serie</th>
+            <th>Fuente</th>
+            <th>Verificado</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-sorteos-body">
+          <tr><td colspan="6" class="vacio">Cargando resultados…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ ESTADÍSTICAS ============ -->
+  <section class="panel" id="tab-estadisticas">
+    <div class="panel-head">
+      <h2>Estadísticas generales</h2>
+      <p class="hint">Resumen calculado sobre los sorteos actualmente cargados en la base.</p>
+    </div>
+
+    <div class="tarjetas-resumen" id="resumen-cards">
+      <div class="tarjeta"><span class="num" id="r-total">—</span><span class="label">sorteos registrados</span></div>
+      <div class="tarjeta"><span class="num" id="r-min">—</span><span class="label">año más antiguo</span></div>
+      <div class="tarjeta"><span class="num" id="r-max">—</span><span class="label">año más reciente</span></div>
+    </div>
+
+    <h3 class="subtitulo">Números más frecuentes</h3>
+    <div class="frecuentes" id="frecuentes-list"></div>
+  </section>
+
+  <!-- ============ CICLOS DEL SIETE ============ -->
+  <section class="panel" id="tab-ciclos">
+    <div class="panel-head">
+      <h2>Ciclos del siete</h2>
+      <p class="hint">
+        Coincidencias exactas cada 7, 14, 21, 24, 35, 42, 49 o 56 años, comparando los dos primeros
+        dígitos, los dos últimos, los tres primeros, los tres últimos, el número completo y el número
+        combinado con la serie del premio mayor.
+      </p>
+    </div>
+
+    <form class="filtros" id="form-ciclos">
+      <label>Tipo de coincidencia
+        <select id="f-tipo-ciclo">
+          <option value="">Todos</option>
+          <option value="dos_primeros">Dos primeros dígitos</option>
+          <option value="dos_ultimos">Dos últimos dígitos</option>
+          <option value="tres_primeros">Tres primeros dígitos</option>
+          <option value="tres_ultimos">Tres últimos dígitos</option>
+          <option value="numero_completo">Número completo</option>
+          <option value="combinado_serie">Número + serie</option>
+        </select>
+      </label>
+      <button type="submit">Buscar coincidencias</button>
+    </form>
+
+    <div class="tabla-wrap">
+      <table id="tabla-ciclos">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Valor</th>
+            <th>Ciclo</th>
+            <th>Año origen</th>
+            <th>Año repite</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-ciclos-body">
+          <tr><td colspan="5" class="vacio">Selecciona un tipo y presiona «Buscar coincidencias».</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ HEMEROTECA / NOTICIAS (fase 2, próximamente) ============ -->
+  <section class="panel" id="tab-hemeroteca">
+    <div class="panel-head">
+      <h2>Hemeroteca &amp; Google News</h2>
+      <p class="hint">Segunda fase del proyecto — extracción de resultados desde prensa histórica y noticias.</p>
+    </div>
+
+    <div class="proximamente">
+      <div class="ticket-stub">PRÓXIMAMENTE</div>
+      <ul>
+        <li><strong>OCR de periódicos:</strong> extracción automática de resultados desde archivos digitalizados de prensa histórica.</li>
+        <li><strong>Hemeroteca:</strong> búsqueda y verificación cruzada contra ediciones antiguas.</li>
+        <li><strong>Google News:</strong> monitoreo de publicaciones recientes sobre sorteos.</li>
+        <li><strong>Agente IA:</strong> asistente que responde preguntas sobre el histórico de resultados.</li>
+      </ul>
+      <p class="nota">Esta sección se activa una vez confirmado el módulo base (Fase 1) funcionando de forma estable en local.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Azar Sincronizado &middot; API disponible en <a href="/docs" target="_blank">/docs</a></p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
