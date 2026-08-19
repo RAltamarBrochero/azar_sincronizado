@@ -25,6 +25,7 @@
   <button class="tab-btn active" data-tab="consulta">Consulta histórica</button>
   <button class="tab-btn" data-tab="estadisticas">Estadísticas</button>
   <button class="tab-btn" data-tab="ciclos">Ciclos del siete</button>
+  <button class="tab-btn" data-tab="ocr">Cargar recorte (OCR)</button>
   <button class="tab-btn" data-tab="hemeroteca">Hemeroteca &amp; noticias</button>
 </nav>
 
@@ -125,6 +126,48 @@
           <tr><td colspan="5" class="vacio">Selecciona un tipo y presiona «Buscar coincidencias».</td></tr>
         </tbody>
       </table>
+    </div>
+  </section>
+
+  <!-- ============ OCR DE RECORTES DE PERIÓDICO (1970-2013) ============ -->
+  <section class="panel" id="tab-ocr">
+    <div class="panel-head">
+      <h2>Cargar recorte de periódico (OCR)</h2>
+      <p class="hint">
+        Para el rango 1970–2013, que no tiene fuente digital oficial: sube la foto o escaneo
+        de la página donde aparece el resultado. El sistema propone fecha, número y serie —
+        tú revisas y confirmas antes de que quede guardado.
+      </p>
+    </div>
+
+    <form class="filtros" id="form-ocr">
+      <label>Imagen del recorte
+        <input type="file" id="f-ocr-imagen" accept="image/*" required>
+      </label>
+      <button type="submit">Analizar con OCR</button>
+    </form>
+
+    <div id="ocr-resultado" class="ocr-resultado" hidden>
+      <h3 class="subtitulo">Candidatos detectados</h3>
+      <p class="hint">Corrige lo que haga falta antes de guardar. Nada se guarda automáticamente.</p>
+
+      <form class="filtros" id="form-confirmar-ocr">
+        <label>Fecha
+          <input type="date" id="ocr-fecha" required>
+        </label>
+        <label>Número (premio mayor)
+          <input type="text" id="ocr-numero" maxlength="4" placeholder="0356" required>
+        </label>
+        <label>Serie
+          <input type="text" id="ocr-serie" maxlength="10" placeholder="012">
+        </label>
+        <button type="submit">Guardar sorteo</button>
+      </form>
+
+      <p class="hint" id="ocr-candidatos-numeros"></p>
+
+      <h3 class="subtitulo">Texto crudo detectado por OCR</h3>
+      <pre class="ocr-texto-crudo" id="ocr-texto-crudo"></pre>
     </div>
   </section>
 

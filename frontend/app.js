@@ -145,6 +145,73 @@ document.getElementById("form-ciclos").addEventListener("submit", async (e) => {
   }
 });
 
+// ---------- OCR de recortes de periódico ----------
+document.getElementById("form-ocr").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const input = document.getElementById("f-ocr-imagen");
+  if (!input.files.length) return;
+
+  const boton = e.target.querySelector("button");
+  boton.disabled = true;
+  boton.textContent = "Analizando…";
+
+  const formData = new FormData();
+  formData.append("archivo", input.files[0]);
+
+  try {
+    const res = await fetch(`${API_BASE}/ocr/procesar`, { method: "POST", body: formData });
+    if (!res.ok) throw new Error("fallo OCR");
+    const data = await res.json();
+
+    document.getElementById("ocr-resultado").hidden = false;
+    document.getElementById("ocr-fecha").value = data.fecha_candidata ?? "";
+    document.getElementById("ocr-numero").value = (data.numeros_candidatos && data.numeros_candidatos[0]) || "";
+    document.getElementById("ocr-serie").value = data.serie_candidata ?? "";
+    document.getElementById("ocr-texto-crudo").textContent = data.texto_detectado || "(sin texto detectado)";
+
+    const otros = (data.numeros_candidatos || []).slice(1);
+    document.getElementById("ocr-candidatos-numeros").textContent = otros.length
+      ? `Otros números detectados en la imagen, por si el primero no es el correcto: ${otros.join(", ")}`
+      : "";
+  } catch (err) {
+    alert("No se pudo analizar la imagen. Verifica que el archivo sea una foto/escaneo legible.");
+  } finally {
+    boton.disabled = false;
+    boton.textContent = "Analizar con OCR";
+  }
+});
+
+document.getElementById("form-confirmar-ocr").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const payload = {
+    loteria: "Lotería de Bogotá",
+    fecha: document.getElementById("ocr-fecha").value,
+    numero: document.getElementById("ocr-numero").value,
+    serie: document.getElementById("ocr-serie").value || null,
+    fuente: "OCR de periódico (pendiente de verificación)",
+    verificado: false,
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/sorteos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Error al guardar");
+    }
+    alert("Sorteo guardado correctamente (marcado como no verificado hasta confirmar con una segunda fuente).");
+    document.getElementById("ocr-resultado").hidden = true;
+    document.getElementById("form-ocr").reset();
+    cargarSorteos();
+    cargarEstadisticas();
+  } catch (err) {
+    alert(`No se pudo guardar: ${err.message}`);
+  }
+});
+
 // ---------- Inicialización ----------
 comprobarEstado();
 cargarSorteos();

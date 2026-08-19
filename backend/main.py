@@ -5,12 +5,12 @@ Fase 1: Lotería de Bogotá, resultados históricos 1970–2026.
 Ejecutar localmente:
     uvicorn backend.main:app --reload
 """
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from . import crud, models, schemas, stats
+from . import crud, models, ocr, schemas, stats
 from .database import Base, SessionLocal, engine, get_db
 
 # Crea las tablas si no existen todavía
@@ -137,6 +137,29 @@ def ciclos_de_siete(
     if len(sorteos) < 2:
         return []
     return stats.encontrar_ciclos_de_siete(sorteos, tipos=tipo)
+
+
+# ---------------------------------------------------------------------------
+# OCR (recortes de periódico) — solo lectura/sugerencia, no guarda nada
+# ---------------------------------------------------------------------------
+
+@app.post("/ocr/procesar", tags=["OCR"])
+async def ocr_procesar(archivo: UploadFile = File(...)):
+    """
+    Recibe una foto/escaneo de un recorte de periódico con un resultado
+    de lotería y devuelve candidatos de fecha, número y serie detectados
+    por OCR. No guarda nada: el humano revisa y confirma con POST /sorteos.
+    """
+    if not archivo.content_type or not archivo.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="El archivo debe ser una imagen (jpg, png, etc.)")
+
+    contenido = await archivo.read()
+    try:
+        resultado = ocr.procesar_imagen(contenido)
+    except Exception as e:
+        raise HTTPException(status_code=422, detail=f"No se pudo procesar la imagen: {e}")
+
+    return resultado
 
 
 # ---------------------------------------------------------------------------

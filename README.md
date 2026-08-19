@@ -88,6 +88,43 @@ cada uno de esos ciclos de años, usando seis formas de comparación
 > Nota: 24 no es múltiplo de 7 como el resto de ciclos (7, 14, 21, 28, 35…),
 > pero se dejó tal como se pidió originalmente.
 
+## OCR de periódicos (1970 — 2013)
+
+No existe un dataset digital oficial para este rango, así que el flujo es
+**semi-automático y siempre con revisión humana**: nadie sube resultados
+sin confirmarlos.
+
+1. Consigue la foto/escaneo de la página del periódico con el resultado,
+   desde una fuente a la que tengas acceso legítimo:
+   - Consulta presencial en la **Hemeroteca digital de la Biblioteca
+     Nacional de Colombia** (catalogoenlinea.bibliotecanacional.gov.co).
+   - Archivo digital con suscripción de El Tiempo / El Espectador.
+   - Recortes propios, microfilm fotografiado, etc.
+2. En la pestaña **"Cargar recorte (OCR)"** de la app, sube la imagen.
+3. El sistema (Tesseract OCR) propone fecha, número y serie detectados.
+4. **Revisas y corriges** lo que haga falta antes de guardar. El sorteo
+   queda guardado con `verificado=false` y `fuente="OCR de periódico"`.
+5. Cuando encuentres una segunda fuente independiente que confirme el
+   mismo resultado, actualiza el registro a `verificado=true` (vía
+   `PATCH`/`PUT` — pendiente de agregar ese endpoint, o directo en la
+   base por ahora).
+
+Este módulo **no scrapea ninguna hemeroteca automáticamente** — sería
+tanto técnicamente frágil como probablemente contrario a los términos de
+esas plataformas. La automatización real está en la lectura OCR de una
+imagen que tú ya obtuviste legítimamente, no en conseguir la imagen.
+
+Requiere tener instalado Tesseract OCR en el sistema (no solo la librería
+Python):
+
+```bash
+# Ubuntu/Debian
+sudo apt-get install tesseract-ocr tesseract-ocr-spa
+
+# macOS
+brew install tesseract tesseract-lang
+```
+
 ## Importar resultados OFICIALES reales (2014 — hoy)
 
 Fuente: [Datos Abiertos Bogotá](https://datosabiertos.bogota.gov.co/dataset/resultados-loteria-de-bogota),
@@ -130,10 +167,10 @@ con la fuente "dato de prueba (ficticio)" corresponde a un sorteo real.
 1. ~~Fuente de datos histórica legítima~~ ✅ resuelto para 2014-hoy con
    Datos Abiertos Bogotá. **Pendiente: 1970-2013**, que no tiene dataset
    oficial digitalizado y requiere ir a prensa/hemeroteca.
-2. **OCR de periódicos (1970-2013):** extracción de resultados desde
-   prensa histórica digitalizada (Biblioteca Nacional, Banco de la
-   República, archivos de El Tiempo/El Espectador), con doble verificación
-   cruzada antes de marcar `verificado=true`.
+2. ~~OCR de periódicos (1970-2013)~~ ✅ implementado: módulo de carga de
+   recortes con revisión humana obligatoria antes de guardar. Falta
+   conseguir las imágenes reales de hemeroteca/prensa (paso manual, ver
+   sección de arriba) y cargarlas una por una.
 3. **Hemeroteca y Google News:** búsqueda y contraste de fuentes.
 4. **Agente IA:** asistente conversacional sobre el histórico ya cargado.
 5. **Ampliar a las demás loterías de Colombia**, reutilizando el mismo
