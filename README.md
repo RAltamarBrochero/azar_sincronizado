@@ -88,6 +88,35 @@ cada uno de esos ciclos de años, usando seis formas de comparación
 > Nota: 24 no es múltiplo de 7 como el resto de ciclos (7, 14, 21, 28, 35…),
 > pero se dejó tal como se pidió originalmente.
 
+## Importar resultados OFICIALES reales (2014 — hoy)
+
+Fuente: [Datos Abiertos Bogotá](https://datosabiertos.bogota.gov.co/dataset/resultados-loteria-de-bogota),
+publicado directamente por la Lotería de Bogotá, actualizado mensualmente.
+No cubre 1970–2013 (ver sección de próximos pasos).
+
+```bash
+# 1. Primero en modo de prueba: muestra qué columnas detectó, no guarda nada
+python -m scripts.importar_datos_abiertos_bogota --dry-run
+
+# 2. Si el mapeo de columnas se ve correcto, importar de verdad
+python -m scripts.importar_datos_abiertos_bogota
+```
+
+El script detecta automáticamente los nombres reales de las columnas del
+archivo (pueden variar levemente entre actualizaciones del dataset), y si
+no logra identificar `fecha` o `numero` se detiene y te dice qué agregar
+en `CANDIDATOS_COLUMNAS` dentro del script, en vez de importar datos mal
+interpretados.
+
+Cada sorteo importado por esta vía queda guardado con `verificado=true`
+y `fuente="Datos Abiertos Bogotá (oficial)"`, para distinguirlo claramente
+de los datos de prueba ficticios.
+
+> Si el nombre del archivo XLSX cambia (la URL incluye el mes y el número
+> de sorteo, ej. `...-a-julio-2026-sorteo-2855.xlsx`), actualiza la
+> constante `URL_XLSX` en `scripts/importar_datos_abiertos_bogota.py`
+> con el enlace vigente desde la página del dataset.
+
 ## ⚠️ Importante sobre los datos actuales
 
 La base **no trae resultados históricos reales todavía**. El script
@@ -98,11 +127,13 @@ con la fuente "dato de prueba (ficticio)" corresponde a un sorteo real.
 
 ## Próximos pasos (siguientes fases, según lo planeado)
 
-1. **Fuente de datos histórica legítima:** definir de dónde vendrán los
-   resultados reales 1970–2026 (API oficial si existe, prensa digitalizada,
-   hemeroteca) antes de escribir cualquier scraper.
-2. **OCR de periódicos:** extracción de resultados desde prensa histórica
-   digitalizada, con doble verificación antes de marcar `verificado=true`.
+1. ~~Fuente de datos histórica legítima~~ ✅ resuelto para 2014-hoy con
+   Datos Abiertos Bogotá. **Pendiente: 1970-2013**, que no tiene dataset
+   oficial digitalizado y requiere ir a prensa/hemeroteca.
+2. **OCR de periódicos (1970-2013):** extracción de resultados desde
+   prensa histórica digitalizada (Biblioteca Nacional, Banco de la
+   República, archivos de El Tiempo/El Espectador), con doble verificación
+   cruzada antes de marcar `verificado=true`.
 3. **Hemeroteca y Google News:** búsqueda y contraste de fuentes.
 4. **Agente IA:** asistente conversacional sobre el histórico ya cargado.
 5. **Ampliar a las demás loterías de Colombia**, reutilizando el mismo
