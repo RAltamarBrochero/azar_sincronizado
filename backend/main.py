@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from . import crud, models, ocr, schemas, stats
+from . import crud, models, noticias, ocr, schemas, stats
 from .database import Base, SessionLocal, engine, get_db
 
 # Crea las tablas si no existen todavía
@@ -160,6 +160,22 @@ async def ocr_procesar(archivo: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=f"No se pudo procesar la imagen: {e}")
 
     return resultado
+
+
+# ---------------------------------------------------------------------------
+# Noticias (Google News, en vivo, no se guarda en base)
+# ---------------------------------------------------------------------------
+
+@app.get("/noticias", tags=["Noticias"])
+def noticias_recientes(
+    q: str | None = Query(default=None, description="Consulta personalizada; por defecto busca resultados recientes"),
+    limite: int = Query(default=15, le=50),
+):
+    consulta = q or noticias.CONSULTA_POR_DEFECTO
+    try:
+        return noticias.buscar_noticias(consulta=consulta, limite=limite)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"No se pudo consultar Google News: {e}")
 
 
 # ---------------------------------------------------------------------------

@@ -171,7 +171,9 @@ con la fuente "dato de prueba (ficticio)" corresponde a un sorteo real.
    recortes con revisión humana obligatoria antes de guardar. Falta
    conseguir las imágenes reales de hemeroteca/prensa (paso manual, ver
    sección de arriba) y cargarlas una por una.
-3. **Hemeroteca y Google News:** búsqueda y contraste de fuentes.
+3. ~~Google News~~ ✅ implementado: pestaña "Hemeroteca & noticias" consulta
+   en vivo el RSS público de Google News (sin API key), con buscador
+   personalizable.
 4. **Agente IA:** asistente conversacional sobre el histórico ya cargado.
 5. **Ampliar a las demás loterías de Colombia**, reutilizando el mismo
    modelo (`loteria` ya es un campo del modelo `Sorteo`).

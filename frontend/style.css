@@ -301,6 +301,39 @@ td.vacio { text-align: center; color: var(--texto-suave); padding: 28px; }
   color: rgba(24,22,20,0.6);
 }
 
+.noticias-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.noticia-item {
+  background: var(--papel-alto);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 14px 16px;
+  text-decoration: none;
+  color: var(--texto);
+  display: block;
+  transition: border-color 0.15s ease;
+}
+.noticia-item:hover { border-color: var(--latón); }
+
+.noticia-item .titulo {
+  font-family: var(--fuente-display);
+  font-weight: 700;
+  font-size: 0.98rem;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.noticia-item .meta {
+  font-family: var(--fuente-mono);
+  font-size: 0.72rem;
+  color: var(--texto-suave);
+}
+
 /* ---------- Próximamente / hemeroteca ---------- */
 .proximamente {
   position: relative;

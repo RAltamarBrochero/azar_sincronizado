@@ -4,12 +4,18 @@
 const API_BASE = window.location.origin;
 
 // ---------- Navegación entre pestañas ----------
+let noticiasCargadas = false;
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
     document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
     btn.classList.add("active");
     document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
+
+    if (btn.dataset.tab === "hemeroteca" && !noticiasCargadas) {
+      noticiasCargadas = true;
+      cargarNoticias();
+    }
   });
 });
 
@@ -210,6 +216,42 @@ document.getElementById("form-confirmar-ocr").addEventListener("submit", async (
   } catch (err) {
     alert(`No se pudo guardar: ${err.message}`);
   }
+});
+
+// ---------- Noticias (Google News) ----------
+async function cargarNoticias(q = "") {
+  const cont = document.getElementById("noticias-lista");
+  cont.innerHTML = `<p class="hint">Cargando noticias…</p>`;
+
+  const url = new URL(`${API_BASE}/noticias`);
+  if (q) url.searchParams.set("q", q);
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.length) {
+      cont.innerHTML = `<p class="hint">No se encontraron noticias recientes para esta búsqueda.</p>`;
+      return;
+    }
+
+    cont.innerHTML = data
+      .map(
+        (n) => `
+        <a class="noticia-item" href="${n.enlace}" target="_blank" rel="noopener">
+          <span class="titulo">${n.titulo ?? "(sin título)"}</span>
+          <span class="meta">${n.fuente ?? ""}${n.publicado ? " · " + n.publicado : ""}</span>
+        </a>`
+      )
+      .join("");
+  } catch (err) {
+    cont.innerHTML = `<p class="hint">No se pudo consultar Google News en este momento.</p>`;
+  }
+}
+
+document.getElementById("form-noticias").addEventListener("submit", (e) => {
+  e.preventDefault();
+  cargarNoticias(document.getElementById("f-noticias-q").value);
 });
 
 // ---------- Inicialización ----------

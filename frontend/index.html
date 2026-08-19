@@ -171,22 +171,32 @@
     </div>
   </section>
 
-  <!-- ============ HEMEROTECA / NOTICIAS (fase 2, próximamente) ============ -->
+  <!-- ============ HEMEROTECA / NOTICIAS ============ -->
   <section class="panel" id="tab-hemeroteca">
     <div class="panel-head">
-      <h2>Hemeroteca &amp; Google News</h2>
-      <p class="hint">Segunda fase del proyecto — extracción de resultados desde prensa histórica y noticias.</p>
+      <h2>Noticias recientes</h2>
+      <p class="hint">Cobertura reciente sobre la Lotería de Bogotá, vía Google News (consulta en vivo, no se guarda en la base).</p>
     </div>
 
+    <form class="filtros" id="form-noticias">
+      <label>Buscar
+        <input type="text" id="f-noticias-q" placeholder='"Lotería de Bogotá" resultado sorteo'>
+      </label>
+      <button type="submit">Buscar noticias</button>
+    </form>
+
+    <div class="noticias-lista" id="noticias-lista">
+      <p class="hint">Cargando noticias…</p>
+    </div>
+
+    <h3 class="subtitulo">Hemeroteca (1970–2013)</h3>
     <div class="proximamente">
-      <div class="ticket-stub">PRÓXIMAMENTE</div>
-      <ul>
-        <li><strong>OCR de periódicos:</strong> extracción automática de resultados desde archivos digitalizados de prensa histórica.</li>
-        <li><strong>Hemeroteca:</strong> búsqueda y verificación cruzada contra ediciones antiguas.</li>
-        <li><strong>Google News:</strong> monitoreo de publicaciones recientes sobre sorteos.</li>
-        <li><strong>Agente IA:</strong> asistente que responde preguntas sobre el histórico de resultados.</li>
-      </ul>
-      <p class="nota">Esta sección se activa una vez confirmado el módulo base (Fase 1) funcionando de forma estable en local.</p>
+      <div class="ticket-stub">FLUJO MANUAL</div>
+      <p class="nota">
+        Para resultados anteriores a 2014 no hay fuente digital automatizable: usa la pestaña
+        <strong>«Cargar recorte (OCR)»</strong> con imágenes obtenidas de la Hemeroteca Nacional
+        o archivos de prensa con suscripción. Ver instrucciones en el README del proyecto.
+      </p>
     </div>
   </section>
 
