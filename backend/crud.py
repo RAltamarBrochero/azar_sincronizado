@@ -17,6 +17,7 @@ def crear_sorteo(db: Session, sorteo: schemas.SorteoCreate) -> models.Sorteo:
         anio=sorteo.fecha.year,
         numero=sorteo.numero,
         serie=sorteo.serie,
+        ciudad=sorteo.ciudad,
         numero_sorteo=sorteo.numero_sorteo,
         fuente=sorteo.fuente,
         verificado=sorteo.verificado,

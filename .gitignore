@@ -9,6 +9,10 @@ __pycache__/
 *.db
 *.sqlite3
 
+# Archivos de datos personales (no se suben al repo)
+/data/
+revisar_manual.csv
+
 # Archivos del sistema
 .DS_Store
 Thumbs.db

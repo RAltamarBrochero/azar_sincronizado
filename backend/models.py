@@ -23,6 +23,7 @@ class Sorteo(Base):
     # para no perder ceros a la izquierda.
     numero = Column(String(4), nullable=False)
     serie = Column(String(10), nullable=True)
+    ciudad = Column(String, nullable=True)  # ciudad donde se transmitió/realizó el sorteo, cuando se conoce
 
     fuente = Column(String, nullable=True)  # de dónde se obtuvo el dato (OCR, prensa, API oficial, manual...)
     verificado = Column(Boolean, default=False)  # True cuando el dato fue confirmado por al menos 2 fuentes

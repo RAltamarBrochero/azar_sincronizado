@@ -12,6 +12,7 @@ class SorteoBase(BaseModel):
     fecha: date
     numero: str = Field(..., min_length=1, max_length=4)
     serie: Optional[str] = Field(default=None, max_length=10)
+    ciudad: Optional[str] = Field(default=None, max_length=100)
     numero_sorteo: Optional[int] = None
     fuente: Optional[str] = None
     verificado: bool = False

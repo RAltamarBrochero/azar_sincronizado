@@ -88,11 +88,63 @@ cada uno de esos ciclos de años, usando seis formas de comparación
 > Nota: 24 no es múltiplo de 7 como el resto de ciclos (7, 14, 21, 28, 35…),
 > pero se dejó tal como se pidió originalmente.
 
-## OCR de periódicos (1970 — 2013)
+## Importar tu archivo histórico personal (1965 — 2007, ¡+2193 sorteos reales!)
 
-No existe un dataset digital oficial para este rango, así que el flujo es
-**semi-automático y siempre con revisión humana**: nadie sube resultados
-sin confirmarlos.
+Este es el importador más importante del proyecto: usa tu archivo
+`historicoloteria-bta.xls` (1965-2007) y tus CSV oficiales locales
+(2014-2023), sin depender de internet ni de ninguna API.
+
+**No subas tus archivos de datos al repositorio** — `/data/` está en
+`.gitignore` a propósito, para no distribuir públicamente un archivo que
+quizás no sea tuyo para redistribuir. Colócalos localmente así:
+
+```
+azar_sincronizado/
+└── data/
+    ├── historicoloteria-bta.xls
+    ├── resultados-loteria-de-bogota.csv
+    └── resultados-loteria-de-bogota-2022.csv
+```
+
+Luego:
+
+```bash
+# 1. Modo de prueba: genera el reporte, no guarda nada todavía
+python -m scripts.importar_historico_local \
+    --xls data/historicoloteria-bta.xls \
+    --csv data/resultados-loteria-de-bogota.csv data/resultados-loteria-de-bogota-2022.csv \
+    --dry-run
+
+# 2. Si el reporte se ve bien, importar de verdad
+python -m scripts.importar_historico_local \
+    --xls data/historicoloteria-bta.xls \
+    --csv data/resultados-loteria-de-bogota.csv data/resultados-loteria-de-bogota-2022.csv
+```
+
+**Cómo se validan las fechas:** el `.xls` mezcla varios formatos de fecha
+en la misma columna. En vez de adivinar, cada fecha se compara contra el
+sorteo más cercano hacia atrás Y hacia adelante (los sorteos son
+semanales, así que deben avanzar ~7 días). Si una fecha no encaja con
+ninguno de los dos vecinos, no se importa — se guarda en
+`revisar_manual.csv` para que la corrijas a mano.
+
+En la corrida de referencia (mis propias pruebas con el archivo real):
+**2,193 sorteos importados** de 1965 a 2023, con solo **36 filas** (de
+más de 2,600) marcadas para revisión manual — la mayoría concentradas en
+un tramo desordenado del archivo original alrededor de 2002.
+
+Los CSV oficiales solo aportan la fila `PREMIO MAYOR` de cada sorteo
+(traen todos los premios, pero el proyecto solo rastrea el mayor). Si
+hay sorteos que aparecen tanto en el `.xls` como en un CSV, no se
+duplican — se queda la primera versión importada.
+
+## OCR de periódicos (huecos restantes: ~2008-2013 y las 36 filas dudosas de 2002)
+
+Con el archivo histórico personal, el hueco real quedó mucho más chico:
+solo **2008-2013** (entre el `.xls` y los CSV oficiales) y las ~36 fechas
+dudosas marcadas en `revisar_manual.csv`. Para esos casos puntuales, no
+existe fuente digital oficial, así que el flujo es **semi-automático y
+siempre con revisión humana**: nadie sube resultados sin confirmarlos.
 
 1. Consigue la foto/escaneo de la página del periódico con el resultado,
    desde una fuente a la que tengas acceso legítimo:
@@ -186,9 +238,10 @@ con la fuente "dato de prueba (ficticio)" corresponde a un sorteo real.
 
 ## Próximos pasos (siguientes fases, según lo planeado)
 
-1. ~~Fuente de datos histórica legítima~~ ✅ resuelto para 2014-hoy con
-   Datos Abiertos Bogotá. **Pendiente: 1970-2013**, que no tiene dataset
-   oficial digitalizado y requiere ir a prensa/hemeroteca.
+1. ~~Fuente de datos histórica legítima~~ ✅ resuelto para 1965-2007
+   (archivo personal `.xls`) y 2014-2023 (CSV oficiales/Datos Abiertos).
+   **Hueco restante: 2008-2013**, más ~36 fechas dudosas de 2002 marcadas
+   en `revisar_manual.csv`.
 2. ~~OCR de periódicos (1970-2013)~~ ✅ implementado: módulo de carga de
    recortes con revisión humana obligatoria antes de guardar. Falta
    conseguir las imágenes reales de hemeroteca/prensa (paso manual, ver
