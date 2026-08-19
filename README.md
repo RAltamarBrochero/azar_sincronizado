@@ -125,6 +125,28 @@ sudo apt-get install tesseract-ocr tesseract-ocr-spa
 brew install tesseract tesseract-lang
 ```
 
+## Agente IA (sin API externa, sin costo)
+
+Pestaña **"Agente IA"**: responde preguntas en lenguaje natural sobre el
+histórico cargado, buscando directamente en la base local. No usa ningún
+modelo de lenguaje ni API paga — es un enrutador de intenciones por
+expresiones regulares (`backend/agente.py`) sobre las mismas funciones de
+`crud.py` y `stats.py` que ya usa el resto de la app.
+
+Preguntas que entiende ahora mismo:
+- "¿Qué número salió el 15 de junio de 1985?"
+- "¿Cuántas veces ha salido el 0356?"
+- "¿Cuál es el número más frecuente?"
+- "¿Qué salió en 1990?" / "Resumen de 2020"
+- "¿Hay ciclos del siete?"
+- "¿Cuántos sorteos hay cargados?"
+
+Para agregar más preguntas que entienda, se agregan patrones nuevos en
+`INTENCIONES`/las funciones de `backend/agente.py` — no requiere tocar el
+resto de la app. Si en el futuro quieres respuestas más naturales (no solo
+patrones fijos), se puede conectar a la API de Claude u otro modelo, pero
+eso ya implica una API key y costo por uso.
+
 ## Importar resultados OFICIALES reales (2014 — hoy)
 
 Fuente: [Datos Abiertos Bogotá](https://datosabiertos.bogota.gov.co/dataset/resultados-loteria-de-bogota),
@@ -174,7 +196,9 @@ con la fuente "dato de prueba (ficticio)" corresponde a un sorteo real.
 3. ~~Google News~~ ✅ implementado: pestaña "Hemeroteca & noticias" consulta
    en vivo el RSS público de Google News (sin API key), con buscador
    personalizable.
-4. **Agente IA:** asistente conversacional sobre el histórico ya cargado.
+4. ~~Agente IA~~ ✅ implementado: pestaña "Agente IA" basada en reglas
+   (sin API externa, sin costo). Pendiente si se quiere: conectarlo a un
+   modelo de lenguaje real para respuestas más flexibles.
 5. **Ampliar a las demás loterías de Colombia**, reutilizando el mismo
    modelo (`loteria` ya es un campo del modelo `Sorteo`).
 

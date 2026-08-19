@@ -218,6 +218,32 @@ document.getElementById("form-confirmar-ocr").addEventListener("submit", async (
   }
 });
 
+// ---------- Agente IA (basado en reglas) ----------
+document.getElementById("form-agente").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const input = document.getElementById("f-agente-pregunta");
+  const pregunta = input.value.trim();
+  if (!pregunta) return;
+
+  const caja = document.getElementById("chat-caja");
+  caja.insertAdjacentHTML("beforeend", `<div class="chat-burbuja usuario">${pregunta}</div>`);
+  input.value = "";
+  caja.scrollTop = caja.scrollHeight;
+
+  try {
+    const res = await fetch(`${API_BASE}/agente/preguntar`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pregunta }),
+    });
+    const data = await res.json();
+    caja.insertAdjacentHTML("beforeend", `<div class="chat-burbuja bot">${data.respuesta}</div>`);
+  } catch (err) {
+    caja.insertAdjacentHTML("beforeend", `<div class="chat-burbuja bot">No pude conectarme con la API.</div>`);
+  }
+  caja.scrollTop = caja.scrollHeight;
+});
+
 // ---------- Noticias (Google News) ----------
 async function cargarNoticias(q = "") {
   const cont = document.getElementById("noticias-lista");

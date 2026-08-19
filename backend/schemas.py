@@ -53,3 +53,11 @@ class EstadisticasResumen(BaseModel):
     anio_min: Optional[int] = None
     anio_max: Optional[int] = None
     numeros_mas_frecuentes: list[dict]
+
+
+class PreguntaAgente(BaseModel):
+    pregunta: str = Field(..., min_length=1, max_length=500)
+
+
+class RespuestaAgente(BaseModel):
+    respuesta: str

@@ -301,6 +301,45 @@ td.vacio { text-align: center; color: var(--texto-suave); padding: 28px; }
   color: rgba(24,22,20,0.6);
 }
 
+.chat-caja {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 16px;
+  background: var(--papel-alto);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+
+.chat-burbuja {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.chat-burbuja.bot {
+  background: #fff;
+  border: 1px solid var(--borde);
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+}
+
+.chat-burbuja.usuario {
+  background: var(--sello);
+  color: #fff;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+}
+
+.chat-form { flex-wrap: nowrap; }
+.chat-form input[type="text"] { flex: 1; }
+
 .noticias-lista {
   display: flex;
   flex-direction: column;

@@ -26,6 +26,7 @@
   <button class="tab-btn" data-tab="estadisticas">Estadísticas</button>
   <button class="tab-btn" data-tab="ciclos">Ciclos del siete</button>
   <button class="tab-btn" data-tab="ocr">Cargar recorte (OCR)</button>
+  <button class="tab-btn" data-tab="agente">Agente IA</button>
   <button class="tab-btn" data-tab="hemeroteca">Hemeroteca &amp; noticias</button>
 </nav>
 
@@ -169,6 +170,27 @@
       <h3 class="subtitulo">Texto crudo detectado por OCR</h3>
       <pre class="ocr-texto-crudo" id="ocr-texto-crudo"></pre>
     </div>
+  </section>
+
+  <!-- ============ AGENTE IA (basado en reglas, sin API externa) ============ -->
+  <section class="panel" id="tab-agente">
+    <div class="panel-head">
+      <h2>Agente IA</h2>
+      <p class="hint">
+        Responde preguntas sobre tu histórico buscando directamente en la base de datos —
+        sin API externa, sin costo. Prueba: «¿qué número salió el 15 de junio de 1985?»,
+        «¿cuál es el número más frecuente?», «¿hay ciclos del siete?».
+      </p>
+    </div>
+
+    <div class="chat-caja" id="chat-caja">
+      <div class="chat-burbuja bot">¡Hola! Pregúntame algo sobre el histórico de sorteos cargado.</div>
+    </div>
+
+    <form class="filtros chat-form" id="form-agente">
+      <input type="text" id="f-agente-pregunta" placeholder="Escribe tu pregunta…" autocomplete="off" required>
+      <button type="submit">Preguntar</button>
+    </form>
   </section>
 
   <!-- ============ HEMEROTECA / NOTICIAS ============ -->

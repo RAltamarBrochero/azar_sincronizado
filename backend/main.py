@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from . import crud, models, noticias, ocr, schemas, stats
+from . import agente, crud, models, noticias, ocr, schemas, stats
 from .database import Base, SessionLocal, engine, get_db
 
 # Crea las tablas si no existen todavía
@@ -176,6 +176,16 @@ def noticias_recientes(
         return noticias.buscar_noticias(consulta=consulta, limite=limite)
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"No se pudo consultar Google News: {e}")
+
+
+# ---------------------------------------------------------------------------
+# Agente IA (basado en reglas, sin API externa, sin costo)
+# ---------------------------------------------------------------------------
+
+@app.post("/agente/preguntar", response_model=schemas.RespuestaAgente, tags=["Agente IA"])
+def agente_preguntar(pregunta: schemas.PreguntaAgente, db: Session = Depends(get_db)):
+    respuesta = agente.responder(db, pregunta.pregunta)
+    return schemas.RespuestaAgente(respuesta=respuesta)
 
 
 # ---------------------------------------------------------------------------
