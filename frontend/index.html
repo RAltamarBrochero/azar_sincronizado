@@ -40,6 +40,9 @@
     </div>
 
     <form class="filtros" id="form-filtros">
+      <label>Lotería
+        <select id="f-loteria"><option value="">Todas</option></select>
+      </label>
       <label>Desde año
         <input type="number" id="f-anio-desde" min="1970" max="2026" placeholder="1970">
       </label>
@@ -54,6 +57,7 @@
       <table id="tabla-sorteos">
         <thead>
           <tr>
+            <th>Lotería</th>
             <th>Fecha</th>
             <th># Sorteo</th>
             <th>Premio mayor</th>
@@ -63,7 +67,7 @@
           </tr>
         </thead>
         <tbody id="tabla-sorteos-body">
-          <tr><td colspan="6" class="vacio">Cargando resultados…</td></tr>
+          <tr><td colspan="7" class="vacio">Cargando resultados…</td></tr>
         </tbody>
       </table>
     </div>
@@ -75,6 +79,12 @@
       <h2>Estadísticas generales</h2>
       <p class="hint">Resumen calculado sobre los sorteos actualmente cargados en la base.</p>
     </div>
+
+    <form class="filtros" id="form-loteria-stats">
+      <label>Lotería
+        <select id="f-loteria-stats"><option value="">Todas</option></select>
+      </label>
+    </form>
 
     <div class="tarjetas-resumen" id="resumen-cards">
       <div class="tarjeta"><span class="num" id="r-total">—</span><span class="label">sorteos registrados</span></div>
@@ -98,6 +108,9 @@
     </div>
 
     <form class="filtros" id="form-ciclos">
+      <label>Lotería
+        <select id="f-loteria-ciclos"><option value="">Todas</option></select>
+      </label>
       <label>Tipo de coincidencia
         <select id="f-tipo-ciclo">
           <option value="">Todos</option>
@@ -153,6 +166,9 @@
       <p class="hint">Corrige lo que haga falta antes de guardar. Nada se guarda automáticamente.</p>
 
       <form class="filtros" id="form-confirmar-ocr">
+        <label>Lotería
+          <input type="text" id="ocr-loteria" placeholder="Lotería de Bogotá" required>
+        </label>
         <label>Fecha
           <input type="date" id="ocr-fecha" required>
         </label>

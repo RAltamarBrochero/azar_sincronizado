@@ -19,6 +19,30 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
   });
 });
 
+// ---------- Selector de loterías (poblado dinámicamente, sin asumir cuál hay) ----------
+async function cargarSelectoresLoteria() {
+  try {
+    const res = await fetch(`${API_BASE}/loterias`);
+    const loterias = await res.json();
+    const selects = ["f-loteria", "f-loteria-stats", "f-loteria-ciclos"];
+    selects.forEach((id) => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      loterias.forEach((l) => {
+        const opt = document.createElement("option");
+        opt.value = l;
+        opt.textContent = l;
+        sel.appendChild(opt);
+      });
+    });
+    // Sugerencia por defecto en el campo de OCR: la primera lotería que exista, si hay alguna
+    const ocrLoteria = document.getElementById("ocr-loteria");
+    if (ocrLoteria && loterias.length) ocrLoteria.value = loterias[0];
+  } catch (err) {
+    console.error("No se pudieron cargar las loterías disponibles", err);
+  }
+}
+
 // ---------- Estado de la API ----------
 async function comprobarEstado() {
   const el = document.getElementById("estado-api");
@@ -50,7 +74,7 @@ async function cargarSorteos(params = {}) {
     const data = await res.json();
 
     if (!data.length) {
-      tbody.innerHTML = `<tr><td colspan="6" class="vacio">
+      tbody.innerHTML = `<tr><td colspan="7" class="vacio">
         No hay sorteos cargados todavía. Usa <code>POST /sorteos</code> o el script de carga para poblar la base.
       </td></tr>`;
       return;
@@ -60,6 +84,7 @@ async function cargarSorteos(params = {}) {
       .map(
         (s) => `
         <tr>
+          <td>${s.loteria}</td>
           <td>${s.fecha}</td>
           <td>${s.numero_sorteo ?? "—"}</td>
           <td><span class="premio-mayor">${s.numero}</span></td>
@@ -70,28 +95,32 @@ async function cargarSorteos(params = {}) {
       )
       .join("");
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" class="vacio">Error al consultar la API.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="vacio">Error al consultar la API.</td></tr>`;
   }
 }
 
 document.getElementById("form-filtros").addEventListener("submit", (e) => {
   e.preventDefault();
   cargarSorteos({
+    loteria: document.getElementById("f-loteria").value,
     anio_desde: document.getElementById("f-anio-desde").value,
     anio_hasta: document.getElementById("f-anio-hasta").value,
   });
 });
 
 document.getElementById("btn-limpiar").addEventListener("click", () => {
+  document.getElementById("f-loteria").value = "";
   document.getElementById("f-anio-desde").value = "";
   document.getElementById("f-anio-hasta").value = "";
   cargarSorteos();
 });
 
 // ---------- Estadísticas ----------
-async function cargarEstadisticas() {
+async function cargarEstadisticas(loteria = "") {
   try {
-    const res = await fetch(`${API_BASE}/estadisticas/resumen`);
+    const url = new URL(`${API_BASE}/estadisticas/resumen`);
+    if (loteria) url.searchParams.set("loteria", loteria);
+    const res = await fetch(url);
     const data = await res.json();
 
     document.getElementById("r-total").textContent = data.total_sorteos ?? 0;
@@ -113,15 +142,22 @@ async function cargarEstadisticas() {
   }
 }
 
+document.getElementById("form-loteria-stats").addEventListener("submit", (e) => e.preventDefault());
+document.getElementById("f-loteria-stats").addEventListener("change", (e) => {
+  cargarEstadisticas(e.target.value);
+});
+
 // ---------- Ciclos del siete ----------
 document.getElementById("form-ciclos").addEventListener("submit", async (e) => {
   e.preventDefault();
   const tipo = document.getElementById("f-tipo-ciclo").value;
+  const loteria = document.getElementById("f-loteria-ciclos").value;
   const tbody = document.getElementById("tabla-ciclos-body");
   tbody.innerHTML = `<tr><td colspan="5" class="vacio">Buscando coincidencias…</td></tr>`;
 
   const url = new URL(`${API_BASE}/estadisticas/ciclos-siete`);
   if (tipo) url.searchParams.set("tipo", tipo);
+  if (loteria) url.searchParams.set("loteria", loteria);
 
   try {
     const res = await fetch(url);
@@ -190,7 +226,7 @@ document.getElementById("form-ocr").addEventListener("submit", async (e) => {
 document.getElementById("form-confirmar-ocr").addEventListener("submit", async (e) => {
   e.preventDefault();
   const payload = {
-    loteria: "Lotería de Bogotá",
+    loteria: document.getElementById("ocr-loteria").value,
     fecha: document.getElementById("ocr-fecha").value,
     numero: document.getElementById("ocr-numero").value,
     serie: document.getElementById("ocr-serie").value || null,
@@ -281,6 +317,7 @@ document.getElementById("form-noticias").addEventListener("submit", (e) => {
 });
 
 // ---------- Inicialización ----------
+cargarSelectoresLoteria();
 comprobarEstado();
 cargarSorteos();
 cargarEstadisticas();

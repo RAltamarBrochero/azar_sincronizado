@@ -55,6 +55,12 @@ def estado(db: Session = Depends(get_db)):
     }
 
 
+@app.get("/loterias", tags=["General"])
+def loterias(db: Session = Depends(get_db)):
+    """Loterías que realmente hay cargadas en la base, para armar selectores."""
+    return crud.listar_loterias(db)
+
+
 # ---------------------------------------------------------------------------
 # Sorteos (CRUD)
 # ---------------------------------------------------------------------------
@@ -113,7 +119,7 @@ def eliminar_sorteo(sorteo_id: int, db: Session = Depends(get_db)):
 
 @app.get("/estadisticas/resumen", tags=["Estadísticas"])
 def estadisticas_resumen(
-    loteria: str | None = Query(default="Lotería de Bogotá"),
+    loteria: str | None = Query(default=None, description="Ej: 'Lotería de Bogotá'. Sin especificar, agrupa todas."),
     db: Session = Depends(get_db),
 ):
     sorteos = crud.obtener_todos_para_analisis(db, loteria=loteria)
@@ -122,7 +128,7 @@ def estadisticas_resumen(
 
 @app.get("/estadisticas/ciclos-siete", response_model=list[schemas.CicloCoincidencia], tags=["Estadísticas"])
 def ciclos_de_siete(
-    loteria: str | None = Query(default="Lotería de Bogotá"),
+    loteria: str | None = Query(default=None, description="Ej: 'Lotería de Bogotá'. Sin especificar, agrupa todas."),
     tipo: list[str] | None = Query(
         default=None,
         description="dos_primeros, dos_ultimos, tres_primeros, tres_ultimos, numero_completo, combinado_serie",

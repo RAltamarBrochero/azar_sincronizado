@@ -88,6 +88,25 @@ cada uno de esos ciclos de años, usando seis formas de comparación
 > Nota: 24 no es múltiplo de 7 como el resto de ciclos (7, 14, 21, 28, 35…),
 > pero se dejó tal como se pidió originalmente.
 
+## ⚠️ Corrección importante: dos loterías distintas, no una
+
+El archivo `historicoloteria-bta.xls` (1965-2007), a pesar de su nombre,
+**NO es de la Lotería de Bogotá** — es de la **Lotería de la Cruz Roja
+Colombiana**. Confirmado contra la fuente oficial
+([lotecruz.org.co/resultados](https://lotecruz.org.co/resultados/)), que
+ofrece un histórico `.xls` casi idéntico hasta mediados de 2007. Esto
+también explica por qué la columna `Ciudad` variaba tanto entre sorteos
+(Bogotá, Medellín, Cali...): la Cruz Roja transmitía su sorteo de forma
+itinerante entre ciudades, a diferencia de Bogotá.
+
+Los CSV oficiales (2014-2023) sí son de la Lotería de Bogotá — vienen
+directo de `datosabiertos.bogota.gov.co`, confirmado independientemente.
+
+**La app ahora soporta ambas loterías en la misma base**, con un selector
+en Consulta histórica, Estadísticas y Ciclos del siete para filtrar por
+una u otra o ver ambas combinadas. `GET /loterias` devuelve las que
+realmente hay cargadas — nada queda hardcodeado a "Bogotá" por defecto.
+
 ## Importar tu archivo histórico personal (1965 — 2007, ¡+2193 sorteos reales!)
 
 Este es el importador más importante del proyecto: usa tu archivo

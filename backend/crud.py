@@ -66,6 +66,12 @@ def contar_sorteos(db: Session, loteria: Optional[str] = None) -> int:
     return query.count()
 
 
+def listar_loterias(db: Session) -> list[str]:
+    """Devuelve los nombres de lotería que realmente hay en la base, sin duplicados."""
+    filas = db.query(models.Sorteo.loteria).distinct().order_by(models.Sorteo.loteria).all()
+    return [f[0] for f in filas]
+
+
 def eliminar_sorteo(db: Session, sorteo_id: int) -> bool:
     db_sorteo = obtener_sorteo(db, sorteo_id)
     if not db_sorteo:

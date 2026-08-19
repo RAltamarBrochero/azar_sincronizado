@@ -1,24 +1,27 @@
 """
-Importa el archivo histórico personal de Rafael (historicoloteria-bta.xls,
-1965-2007) y los CSV oficiales que ya tenía descargados (2014-2023).
+Importa dos fuentes históricas distintas que NO son la misma lotería:
+
+    - historicoloteria-bta.xls   -> LOTERÍA DE LA CRUZ ROJA COLOMBIANA (1965-2007)
+      Confirmado contra la fuente oficial: lotecruz.org.co/resultados/
+      (el nombre "-bta" del archivo era engañoso; a pesar del nombre, NO es
+      Lotería de Bogotá — el sorteo se transmitía de forma itinerante entre
+      ciudades, columna 'Ciudad' variable, propio de la Cruz Roja).
+
+    - resultados-loteria-de-bogota*.csv -> LOTERÍA DE BOGOTÁ (2014-2023)
+      Oficial, de datosabiertos.bogota.gov.co, ya confirmado antes.
 
 A diferencia del importador que descarga en vivo de Datos Abiertos Bogotá,
 este script trabaja con archivos que YA TIENES en tu máquina. No descarga
 nada de internet.
 
-Cubre:
-    - historicoloteria-bta.xls   (1965-2007, columna Premio1 = premio mayor)
-    - resultados-loteria-de-bogota.csv          (oficial, todos los premios)
-    - resultados-loteria-de-bogota-2022.csv     (oficial, todos los premios)
-      -> de estos dos CSV solo se importa la fila NOMBRE_PREMIO = "PREMIO MAYOR..."
-
-No cubre 2008-2013 (hueco real entre el archivo personal y los CSV oficiales).
+No cubre 2008-2013 de ninguna de las dos loterías (hueco real, pendiente).
 
 VALIDACIÓN DE FECHAS: el archivo .xls mezcla 3 formatos de fecha distintos
 en la misma columna. En vez de adivinar, este script ordena por número de
-sorteo (que es secuencial, ~1 por semana) y verifica que las fechas avancen
-de forma consistente. Cualquier fila cuya fecha rompa esa secuencia se
-guarda en un CSV de revisión aparte en vez de importarse a ciegas.
+sorteo (que es secuencial, ~1 por semana) y compara cada fecha contra su
+vecino más cercano hacia atrás Y hacia adelante. Cualquier fila cuya fecha
+no encaje con ninguno de los dos se guarda en un CSV de revisión aparte en
+vez de importarse a ciegas.
 
 Uso:
     python -m scripts.importar_historico_local --xls ruta/historicoloteria-bta.xls \\
@@ -39,6 +42,15 @@ from backend.models import Sorteo
 
 TOLERANCIA_DIAS = 3  # cuánto puede desviarse una fecha del patrón semanal antes de marcarse dudosa
 MAX_SALTO_SEMANAS = 6  # a veces hay sorteos saltados (vacaciones, etc.), toleramos hasta 6 semanas de hueco
+
+# El archivo historicoloteria-bta.xls, confirmado con la fuente oficial
+# (lotecruz.org.co/resultados/, que ofrece un histórico .xls casi idéntico
+# hasta mediados de 2007), es en realidad de la LOTERÍA DE LA CRUZ ROJA
+# COLOMBIANA, no de la Lotería de Bogotá. El nombre del archivo ("-bta")
+# resultó ser engañoso. Esto también explica por qué la columna Ciudad
+# variaba tanto entre sorteos (Bogotá, Medellín, Cali...): la Cruz Roja
+# transmitía su sorteo de forma itinerante entre ciudades.
+NOMBRE_LOTERIA_XLS = "Lotería de la Cruz Roja Colombiana"
 
 
 def limpiar_numero_serie(valor: str) -> tuple[str | None, str | None]:
@@ -151,7 +163,7 @@ def procesar_xls(ruta: str) -> tuple[list[dict], list[dict]]:
                 )
 
         registro = {
-            "loteria": "Lotería de Bogotá",
+            "loteria": NOMBRE_LOTERIA_XLS,
             "fecha": actual["fecha"],
             "numero": actual["numero"],
             "serie": actual["serie"],
